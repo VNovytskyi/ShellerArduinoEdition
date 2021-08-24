@@ -2,7 +2,7 @@
 /*
     @file       sheller.h
     @author     vladyslavN
-    @version    based on sheller 0.2  
+    @version    0.5 based on sheller 0.4  
 */
 #ifndef SHELLER_H
 #define SHELLER_H
