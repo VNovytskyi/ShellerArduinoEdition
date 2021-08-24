@@ -39,7 +39,7 @@ uint16_t Sheller::getCrc(const uint8_t *data, const uint16_t length)
 {
     uint16_t crc = 0xFFFF;
     for(uint8_t i = 0; i < length; ++i){
-         crc = (crc << 8) ^ crc16_table[(crc >> 8) ^ *data++];
+        crc = (crc << 8) ^ crc16_table[(crc >> 8) ^ *data++];
     }
 
     return crc;
@@ -156,18 +156,19 @@ bool Sheller::read(uint8_t *dest)
     if (dest != NULL) {
         if (getCircularBufferLength() >= packageLength ) {
             if (foundStartByte()) {
-                if (tryReadData()) {
-                    writeReceivedPackage(dest);
-                    incCircVal(rxBuffBegin, 2);
-                    return true;
-                } else {
-                    if (rxBuffBegin != rxBuffEnd) {
-                        incCircVal(rxBuffBegin, 1);
+                if (getCircularBufferLength() >= packageLength ) {
+                    if (tryReadData()) {
+                        writeReceivedPackage(dest);
+                        return true;
+                    } else {
+                        if (rxBuffBegin != rxBuffEnd) {
+                            incCircVal(rxBuffBegin, 1);
+                        }
                     }
-                }
 
-                if (rxBuffBegin == rxBuffEnd) {
-                    rxBuffEmptyFlag  = 1;
+                    if (rxBuffBegin == rxBuffEnd) {
+                        rxBuffEmptyFlag  = 1;
+                    }
                 }
             }
         }
