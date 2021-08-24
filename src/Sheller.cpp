@@ -153,16 +153,16 @@ bool Sheller::read(uint8_t *dest)
             if (foundStartByte()) {
                 if (tryReadData()) {
                     writeReceivedPackage(dest);
-                    incCircVal(rxBuffBegin , 2);
+                    incCircVal(rxBuffBegin , 3);
                     return true;
                 } else {
-                    if (rxBuffBegin  != rxBuffEnd) {
+                    if (rxBuffBegin != rxBuffEnd) {
                         incCircVal(rxBuffBegin, 1);
                     }
                 }
             }
 
-            if (rxBuffBegin  == rxBuffEnd) {
+            if (rxBuffBegin == rxBuffEnd) {
                 rxBuffEmptyFlag  = 1;
             }
         }
