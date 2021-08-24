@@ -7,7 +7,7 @@
 #ifndef SHELLER_H
 #define SHELLER_H
 
-#include "Arduino.h"
+//#include "Arduino.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>

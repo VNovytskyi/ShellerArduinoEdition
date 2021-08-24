@@ -35,12 +35,6 @@ static const uint16_t crc16_table[256] = {
     0x6E17, 0x7E36, 0x4E55, 0x5E74, 0x2E93, 0x3EB2, 0x0ED1, 0x1EF0
 };
 
-
-void Sheller::getCrcByteByByte(uint16_t &crc, const uint8_t byte)
-{
-    crc = (crc << 8) ^ crc16_table[(crc >> 8) ^ byte];
-}
-
 uint16_t Sheller::getCrc(const uint8_t *data, const uint16_t length)
 {
     uint16_t crc = 0xFFFF;
@@ -51,6 +45,11 @@ uint16_t Sheller::getCrc(const uint8_t *data, const uint16_t length)
     return crc;
 }
 
+void Sheller::getCrcByteByByte(uint16_t &crc, const uint8_t byte)
+{
+    crc = (crc << 8) ^ crc16_table[(crc >> 8) ^ byte];
+}
+
 void Sheller::incCircVal(uint16_t &val, const uint16_t amountIncrease)
 {
     for (uint16_t i = 0; i < amountIncrease; ++i) {
@@ -58,12 +57,28 @@ void Sheller::incCircVal(uint16_t &val, const uint16_t amountIncrease)
     }
 }
 
-void Sheller::writeReceivedPackage(uint8_t *dest)
+bool Sheller::foundStartByte()
 {
-    for (uint8_t i = 0; i < 8; ++i) {
-        incCircVal(rxBuffBegin, 1);
-        dest[i] = rxBuff[rxBuffBegin];
+    if ((rxBuffBegin  == rxBuffEnd) && rxBuffEmptyFlag  == 0) {
+        for (uint16_t i = 0; i < rxBuffLength ; ++i) {
+            if(rxBuff[rxBuffBegin ] == startByte) {
+                startBytePos = rxBuffBegin;
+                return true;
+            }
+            incCircVal(rxBuffBegin, 1);
+        }
+    } else {
+        while((rxBuff[rxBuffBegin ] != startByte) && (rxBuffBegin  != rxBuffEnd)) {
+            incCircVal(rxBuffBegin, 1);
+        }
+
+        if (rxBuff[rxBuffBegin ] == startByte) {
+            startBytePos = rxBuffBegin;
+            return true;
+        }
     }
+
+    return false;
 }
 
 bool Sheller::tryReadData()
@@ -90,29 +105,19 @@ bool Sheller::tryReadData()
     return false;
 }
 
-bool Sheller::foundStartByte()
-{
-    if ((rxBuffBegin  == rxBuffEnd) && rxBuffEmptyFlag  == 0) {
-        for (uint16_t i = 0; i < rxBuffLength ; ++i) {
-            if(rxBuff[rxBuffBegin ] == startByte) {
-                startBytePos = rxBuffBegin ;
-                return true;
-            }
-            incCircVal(rxBuffBegin, 1);
-        }
-    } else {
-        while((rxBuff[rxBuffBegin ] != startByte) && (rxBuffBegin  != rxBuffEnd)) {
-            incCircVal(rxBuffBegin, 1);
-        }
 
-        if (rxBuff[rxBuffBegin ] == startByte) {
-            startBytePos = rxBuffBegin;
-            return true;
-        }
+void Sheller::writeReceivedPackage(uint8_t *dest)
+{
+    for (uint8_t i = 0; i < 8; ++i) {
+        incCircVal(rxBuffBegin, 1);
+        dest[i] = rxBuff[rxBuffBegin];
     }
 
-    return false;
+    if (rxBuffBegin == rxBuffEnd) {
+        rxBuffEmptyFlag  = 1;
+    }
 }
+
 
 uint16_t Sheller::getCircularBufferLength()
 {
@@ -153,17 +158,17 @@ bool Sheller::read(uint8_t *dest)
             if (foundStartByte()) {
                 if (tryReadData()) {
                     writeReceivedPackage(dest);
-                    incCircVal(rxBuffBegin , 3);
+                    incCircVal(rxBuffBegin, 2);
                     return true;
                 } else {
                     if (rxBuffBegin != rxBuffEnd) {
                         incCircVal(rxBuffBegin, 1);
                     }
                 }
-            }
 
-            if (rxBuffBegin == rxBuffEnd) {
-                rxBuffEmptyFlag  = 1;
+                if (rxBuffBegin == rxBuffEnd) {
+                    rxBuffEmptyFlag  = 1;
+                }
             }
         }
     }
