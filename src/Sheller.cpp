@@ -93,7 +93,7 @@ bool Sheller::tryReadData()
     uint16_t calculate_crc = 0xFFFF;
     uint16_t begin = rxBuffBegin;
     incCircVal(begin, 1);
-    for (uint8_t i = 0; i < 8; ++i) {
+    for (uint8_t i = 0; i < usefullDataLength; ++i) {
         getCrcByteByByte(calculate_crc, rxBuff[begin]);
         incCircVal(begin, 1);
     }
@@ -108,7 +108,7 @@ bool Sheller::tryReadData()
 
 void Sheller::writeReceivedPackage(uint8_t *dest)
 {
-    for (uint8_t i = 0; i < 8; ++i) {
+    for (uint8_t i = 0; i < usefullDataLength; ++i) {
         incCircVal(rxBuffBegin, 1);
         dest[i] = rxBuff[rxBuffBegin];
     }
@@ -134,9 +134,13 @@ uint16_t Sheller::getCircularBufferLength()
 
 
 
-Sheller::Sheller()
+Sheller::Sheller(uint8_t startByte, uint8_t usefullDataLength, uint16_t rxBuffLength)
 {
-
+    this->startByte = startByte;
+    this->usefullDataLength = usefullDataLength;
+    this->rxBuffLength = rxBuffLength;
+    rxBuff = new uint8_t[rxBuffLength];
+    packageLength = usefullDataLength + serviceBytesCount;
 }
 
 bool Sheller::push(const uint8_t receivedByte)
@@ -204,4 +208,14 @@ bool Sheller::wrap(uint8_t *data, const uint8_t dataLength, uint8_t *dest)
     }
 
     return false;
+}
+
+uint8_t Sheller::getPackageLength()
+{
+    return packageLength;
+}
+
+uint8_t Sheller::getUsefullDataLength()
+{
+    return usefullDataLength;
 }

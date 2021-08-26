@@ -14,16 +14,14 @@
 
 class Sheller
 {
-public:
-    static const uint8_t  startByte = 0x23;
-    static const uint8_t  usefullDataLength = 8;
-    static const uint8_t  serviceBytesCount = 3;
-    static const uint8_t  packageLength = usefullDataLength + serviceBytesCount;
-    static const uint16_t rxBuffLength = 128;
+    uint8_t  startByte = 0;
+    uint8_t  usefullDataLength = 0;   
+    uint8_t  packageLength = 0;
+    uint16_t rxBuffLength = 0;
+    static const uint8_t serviceBytesCount = 3;
 
-private:
     bool rxBuffEmptyFlag = true;
-    uint8_t  rxBuff[rxBuffLength] = { 0 };
+    uint8_t  *rxBuff = NULL;
     uint16_t rxBuffBegin = 0;
     uint16_t rxBuffEnd = 0;
     uint16_t startBytePos = 0;
@@ -37,13 +35,16 @@ private:
     void writeReceivedPackage(uint8_t *dest);
 
 public:
-    Sheller();
+    Sheller(uint8_t startByte, uint8_t usefullDataLength, uint16_t rxBuffLength);
 
     bool push(const uint8_t receivedByte);
     bool push(const uint8_t *data, const uint8_t dataLength);
 
     bool read(uint8_t *dest);
     bool wrap(uint8_t *data, const uint8_t dataLength, uint8_t *dest);
+
+    uint8_t getPackageLength();
+    uint8_t getUsefullDataLength();
 };
 
 #endif // SHELLER_H
