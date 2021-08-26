@@ -2,7 +2,6 @@
 /*
     @file       sheller.h
     @author     vladyslavN
-    @version    0.5 based on sheller 0.4  
 */
 #ifndef SHELLER_H
 #define SHELLER_H
@@ -15,12 +14,14 @@
 
 class Sheller
 {
+public:
     static const uint8_t  startByte = 0x23;
     static const uint8_t  usefullDataLength = 8;
     static const uint8_t  serviceBytesCount = 3;
     static const uint8_t  packageLength = usefullDataLength + serviceBytesCount;
     static const uint16_t rxBuffLength = 128;
 
+private:
     bool rxBuffEmptyFlag = true;
     uint8_t  rxBuff[rxBuffLength] = { 0 };
     uint16_t rxBuffBegin = 0;
@@ -37,7 +38,10 @@ class Sheller
 
 public:
     Sheller();
+
     bool push(const uint8_t receivedByte);
+    bool push(const uint8_t *data, const uint8_t dataLength);
+
     bool read(uint8_t *dest);
     bool wrap(uint8_t *data, const uint8_t dataLength, uint8_t *dest);
 };

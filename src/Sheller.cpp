@@ -141,7 +141,7 @@ Sheller::Sheller()
 
 bool Sheller::push(const uint8_t receivedByte)
 {
-    if (rxBuffEnd  != rxBuffBegin  || rxBuffEmptyFlag == true) {
+    if (rxBuffEnd != rxBuffBegin || rxBuffEmptyFlag == true) {
         rxBuffEmptyFlag = false;
         rxBuff[rxBuffEnd] = receivedByte;
         rxBuffEnd = (rxBuffEnd + 1) % rxBuffLength;
@@ -149,6 +149,16 @@ bool Sheller::push(const uint8_t receivedByte)
     }
 
     return false;
+}
+
+bool Sheller::push(const uint8_t *data, const uint8_t dataLength)
+{
+    for (uint8_t i = 0; i < dataLength; ++i) {
+        if (!push(data[i])) {
+            return false;
+        }
+    }
+    return true;
 }
 
 bool Sheller::read(uint8_t *dest)
