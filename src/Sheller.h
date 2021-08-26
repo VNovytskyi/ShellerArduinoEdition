@@ -18,7 +18,6 @@ class Sheller
     uint8_t  usefullDataLength = 0;   
     uint8_t  packageLength = 0;
     uint16_t rxBuffLength = 0;
-    static const uint8_t serviceBytesCount = 3;
 
     bool rxBuffEmptyFlag = true;
     uint8_t  *rxBuff = NULL;
@@ -35,6 +34,8 @@ class Sheller
     void writeReceivedPackage(uint8_t *dest);
 
 public:
+    static const uint8_t serviceBytesCount = 3;
+    
     Sheller(uint8_t startByte, uint8_t usefullDataLength, uint16_t rxBuffLength);
 
     bool push(const uint8_t receivedByte);
