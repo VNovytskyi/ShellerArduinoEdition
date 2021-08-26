@@ -15,4 +15,4 @@ wrap	KEYWORD2
 #######################################
 # Constants (LITERAL1)
 #######################################
-serviceBytesCount LITERAL1
+serviceBytesCount	LITERAL1
