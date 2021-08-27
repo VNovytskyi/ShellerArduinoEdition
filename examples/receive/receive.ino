@@ -10,7 +10,7 @@
 #include <Sheller.h>
 #define DATA_LENGTH 8
 Sheller shell(0x23, DATA_LENGTH, 128);
-uint8_t receivedMessage[DATA_LENGTH + Sheller::serviceBytesCount];
+uint8_t receivedMessage[DATA_LENGTH];
 
 void setup() {
   Serial.begin(9600);
