@@ -1,5 +1,6 @@
 # Sheller integrity guarantee 
-Special version of Sheller for using with Arduino. [Original Sheller](https://github.com/VNovytskyi/Sheller)
+Special version of Sheller for using with Arduino. [Original Sheller](https://github.com/VNovytskyi/Sheller)<br>
+To run tests with your device, use [ShellerTerminal](https://github.com/VNovytskyi/ShellerTerminal)
 <p align="center">
   <img src="logo.PNG">
 </p>
